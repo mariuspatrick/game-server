@@ -7,6 +7,8 @@ function factory(stream) {
   router.put("/choice", async (req, res, next) => {
     console.log("choice test");
     try {
+      console.log("this is the user id:", req.body.userId);
+
       const user = await User.findByPk(req.body.userId);
       //console.log("user test:", user);
       await user.update({ choice: req.body.choice });
@@ -14,8 +16,12 @@ function factory(stream) {
       const gameroom = await GameRoom.findByPk(user.gameroomId, {
         include: [User]
       });
+
       console.log("gameroom datavalues test:", gameroom.dataValues);
       const every = gameroom.users.every(user => user.choice !== null);
+
+      console.log("game room user in server: ", gameroom.users);
+
       const usersInGame = gameroom.users;
 
       const player1 = usersInGame[0];
@@ -26,27 +32,29 @@ function factory(stream) {
 
       if (!every) return;
 
-      function playerOneMadeChoice() {
+      // If players cooperate
+
+      function playerOneRats() {
         console.log("this is the player 1 choice: ", player1.choice);
         player1.choice ? true : false;
       }
 
-      function playerTwoMadeChoice() {
+      function playerTwoRats() {
         player2.choice ? true : false;
       }
 
-      if (playerOneMadeChoice() && playerTwoMadeChoice()) {
-        console.log("both cooperate test");
-        player1.points += 1;
-        player2.points += 1;
-      } else if (!playerOneMadeChoice() && !playerTwoMadeChoice()) {
-        console.log("both defect test");
+      if (playerOneRats() && playerTwoRats()) {
+        console.log("both don't talk/cooperate test");
         player1.points += 2;
         player2.points += 2;
-      } else if (playerOneMadeChoice() && !playerTwoMadeChoice()) {
+      } else if (!playerOneRats() && !playerTwoRats()) {
+        console.log("both defect test");
+        player1.points += 1;
+        player2.points += 1;
+      } else if (playerOneRats() && !playerTwoRats()) {
         console.log("1 cooperates 2 defects");
         player1.points += 3;
-      } else if (!playerOneMadeChoice() && playerTwoMadeChoice()) {
+      } else if (!playerOneRats() && playerTwoRats()) {
         console.log("1 defects 2 cooperates");
         player2.points += 3;
       }
