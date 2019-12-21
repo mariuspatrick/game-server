@@ -26,9 +26,6 @@ function factory(stream) {
 
       if (!every) return;
 
-      // const playerOneChoice = player1.choice ? "COLLAB" : "DEFECT";
-      // const playerTwoChoice = player1.choice ? "COLLAB" : "DEFECT";
-
       function playerOneMadeChoice() {
         console.log("this is the player 1 choice: ", player1.choice);
         player1.choice ? true : false;
@@ -46,10 +43,10 @@ function factory(stream) {
         console.log("both defect test");
         player1.points += 2;
         player2.points += 2;
-      } else if (playerOneMadeChoice && !playerTwoMadeChoice) {
+      } else if (playerOneMadeChoice() && !playerTwoMadeChoice()) {
         console.log("1 cooperates 2 defects");
         player1.points += 3;
-      } else if (!playerOneMadeChoice && playerTwoMadeChoice) {
+      } else if (!playerOneMadeChoice() && playerTwoMadeChoice()) {
         console.log("1 defects 2 cooperates");
         player2.points += 3;
       }
